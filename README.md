@@ -26,3 +26,25 @@ An AI-powered image generation and search gallery built with OpenAI's DALL·E AP
 
 ---
 
+## 🛠️ Installation & Running Locally
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/your-username/AiGallary.git
+cd AiGallary
+
+cd server
+npm install
+# Create .env 
+npm run dev
+
+cd ../client
+npm install
+# Optional: add VITE_BACKEND_URL in .env file
+npm run dev
+
+```
+✍️ Author
+Made with ❤️ by Badal sah
+
