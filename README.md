@@ -31,8 +31,8 @@ An AI-powered image generation and search gallery built with OpenAI's DALL·E AP
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/AiGallary.git
-cd AiGallary
+git clone https://github.com/sahbadal/AI-Image-Search-engine.git
+
 
 cd server
 npm install
