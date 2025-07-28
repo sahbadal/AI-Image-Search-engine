@@ -2,7 +2,7 @@
 
 An AI-powered image generation and search gallery built with OpenAI's DALL·E API. Upload prompts, get stunning images, and explore a world of AI creativity.
 
-🌐 **Live Site:** [AiGallary](https://ai-image-search-engine.vercel.app)
+🌐 **Live Site:** [https://aigallary.com](https://ai-image-search-engine.vercel.app)
 
 ---
 
