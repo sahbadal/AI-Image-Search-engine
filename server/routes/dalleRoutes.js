@@ -1,42 +1,50 @@
-import express from 'express';
-import * as dotenv from 'dotenv';
-import OpenAIApi from 'openai';
-// import Configuration from 'openai';
+import express from "express";
+import dotenv from "dotenv";
+import fetch from "node-fetch";
+import FormData from "form-data";
 
 dotenv.config();
-
 const router = express.Router();
 
-// const configuration = new Configuration({
-//   apiKey: process.env.OPENAI_API_KEY,
-// });
-
-// const openai = new OpenAIApi(configuration);
-
-const openai = new OpenAIApi({
-  apiKey:process.env.PENAI_API_KEY
-})
-
-router.route('/').get((req, res) => {
-  res.status(200).json({ message: 'Hello from DALL-E!' });
+router.route("/").get((req, res) => {
+  res.status(200).json({ message: "Hello from Stability AI!" });
 });
 
-router.route('/').post(async (req, res) => {
+router.route("/").post(async (req, res) => {
   try {
     const { prompt } = req.body;
 
-    const aiResponse = await openai.images.generate({
-      prompt,
-      n: 1,
-      size: '1024x1024',
-      response_format: 'b64_json',
-    });
+    const formData = new FormData();
+    formData.append("prompt", prompt);
+    formData.append("output_format", "png");
 
-    const image = aiResponse.data[0].b64_json;
-    res.status(200).json({ photo: image });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send(error?.response.data.error.message || 'Something went wrong');
+    const response = await fetch(
+      "https://api.stability.ai/v2beta/stable-image/generate/core",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.STABILITY_API_KEY}`,
+          Accept: "application/json",
+          ...formData.getHeaders(),
+        },
+        body: formData,
+      }
+    );
+
+    // console.log("Prompt Received:", prompt);
+    // console.log("Stability API Response status:", response.status);
+
+    if (!response.ok) {
+      const error = await response.json();
+      return res.status(500).json({ error });
+    }
+
+    const result = await response.json();
+
+    res.status(200).json({ photo: result.image_base64 || result });
+  } catch (err) {
+    console.error("Image generation failed:", err);
+    res.status(500).json({ error: "Image generation failed" });
   }
 });
 

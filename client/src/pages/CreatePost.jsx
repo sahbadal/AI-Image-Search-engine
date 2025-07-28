@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 import { preview } from '../assets';
 import { getRandomPrompt } from '../utils';
 import { FormField, Loader } from '../components';
+import { toast } from 'react-toastify';
 
 const CreatePost = () => {
   const navigate = useNavigate();
@@ -39,14 +39,21 @@ const CreatePost = () => {
         });
 
         const data = await response.json();
-        setForm({ ...form, photo: `data:image/jpeg;base64,${data.photo}` });
+        if (data.photo?.image) {
+          const base64 = data.photo.image;
+          setForm({ ...form, photo: `data:image/png;base64,${base64}` });
+          toast.success("Image generated successfully!");
+
+        } else {
+          toast.error("Image generation failed");
+        }
       } catch (err) {
-        alert(err);
+        toast.error(err.message);
       } finally {
         setGeneratingImg(false);
       }
     } else {
-      alert('Please provide proper prompt');
+      toast.error('Please provide proper prompt');
     }
   };
 
@@ -65,15 +72,15 @@ const CreatePost = () => {
         });
 
         await response.json();
-        alert('Success');
+        toast.success('Post created successfully!');
         navigate('/');
       } catch (err) {
-        alert(err);
+        toast.error(err.message);
       } finally {
         setLoading(false);
       }
     } else {
-      alert('Please generate an image with proper details');
+      toast.error('Please generate an image with proper details');
     }
   };
 
@@ -81,7 +88,7 @@ const CreatePost = () => {
     <section className="max-w-7xl mx-auto">
       <div>
         <h1 className="font-extrabold text-[#222328] text-[32px]">Create</h1>
-        <p className="mt-2 text-[#666e75] text-[14px] max-w-[500px]">Generate an imaginative image through DALL-E AI and share it with the community</p>
+        <p className="mt-2 text-[#666e75] text-[14px] max-w-[500px]">Generate an imaginative image through AI and share it with the community</p>
       </div>
 
       <form className="mt-16 max-w-3xl" onSubmit={handleSubmit}>
@@ -107,7 +114,7 @@ const CreatePost = () => {
           />
 
           <div className="relative bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-64 p-3 h-64 flex justify-center items-center">
-            { form.photo ? (
+            {form.photo ? (
               <img
                 src={form.photo}
                 alt={form.prompt}
